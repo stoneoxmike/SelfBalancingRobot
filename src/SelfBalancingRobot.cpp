@@ -93,10 +93,10 @@ void IRAM_ATTR Timer0_ISR()
 
 void init_PID() {
   // Tout = Ticks * (Prescale/APB_CLK)
-  // given 80MHz frequency, 80 prescale this makes calculations easy
+  // given 240MHz frequency, 240 prescale this makes calculations easy
   // 1 Tick is 1us
   // init Timer0, 80 prescale division, count up
-  Timer0_Cfg = timerBegin(0, 80, true);
+  Timer0_Cfg = timerBegin(0, 240, true);
   // attach ISR to Timer
   timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
   // set count to 5000 equalling 5ms, autoreload true
