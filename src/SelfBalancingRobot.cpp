@@ -67,6 +67,30 @@ void init_PID() {
 }
 */
 
+// The ISR will be called every 5 milliseconds
+//ISR(TIMER1_COMPA_vect)
+void IRAM_ATTR Timer0_ISR()
+{
+  // calculate the angle of inclination
+  accAngle = atan2(accY, accZ)*RAD_TO_DEG;
+  gyroRate = map(gyroX, -32768, 32767, -250, 250);
+  gyroAngle = (float)gyroRate*sampleTime;  
+  currentAngle = 0.9934*(prevAngle + gyroAngle) + 0.0066*(accAngle);
+  
+  error = currentAngle - targetAngle;
+  errorSum = errorSum + error;  
+  errorSum = constrain(errorSum, -300, 300);
+  //calculate output from P, I and D values
+  motorPower = Kp*(error) + Ki*(errorSum)*sampleTime - Kd*(currentAngle-prevAngle)/sampleTime;
+  prevAngle = currentAngle;
+  // toggle the led on pin13 every second
+  count++;
+  if(count == 200)  {
+    count = 0;
+    digitalWrite(13, !digitalRead(13));
+  }
+}
+
 void init_PID() {
   // Tout = Ticks * (Prescale/APB_CLK)
   // given 80MHz frequency, 80 prescale this makes calculations easy
@@ -111,28 +135,5 @@ void loop() {
   }
   if((distanceCm < 20) && (distanceCm != 0)) {
     setMotors(-motorPower, motorPower);
-  }
-}
-// The ISR will be called every 5 milliseconds
-//ISR(TIMER1_COMPA_vect)
-void IRAM_ATTR Timer0_ISR()
-{
-  // calculate the angle of inclination
-  accAngle = atan2(accY, accZ)*RAD_TO_DEG;
-  gyroRate = map(gyroX, -32768, 32767, -250, 250);
-  gyroAngle = (float)gyroRate*sampleTime;  
-  currentAngle = 0.9934*(prevAngle + gyroAngle) + 0.0066*(accAngle);
-  
-  error = currentAngle - targetAngle;
-  errorSum = errorSum + error;  
-  errorSum = constrain(errorSum, -300, 300);
-  //calculate output from P, I and D values
-  motorPower = Kp*(error) + Ki*(errorSum)*sampleTime - Kd*(currentAngle-prevAngle)/sampleTime;
-  prevAngle = currentAngle;
-  // toggle the led on pin13 every second
-  count++;
-  if(count == 200)  {
-    count = 0;
-    digitalWrite(13, !digitalRead(13));
   }
 }
