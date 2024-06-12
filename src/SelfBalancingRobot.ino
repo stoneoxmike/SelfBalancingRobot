@@ -28,6 +28,8 @@ volatile float accAngle, gyroAngle, currentAngle, prevAngle=0, error, prevError=
 volatile byte count=0;
 int distanceCm;
 
+hw_timer_t *Timer0_Cfg = NULL;
+
 void setMotors(int leftMotorSpeed, int rightMotorSpeed) {
   if(leftMotorSpeed >= 0) {
     analogWrite(leftMotorPWMPin, leftMotorSpeed);
@@ -47,6 +49,7 @@ void setMotors(int leftMotorSpeed, int rightMotorSpeed) {
   }
 }
 
+/*
 void init_PID() {  
   // initialize Timer1
   cli();          // disable global interrupts
@@ -61,6 +64,20 @@ void init_PID() {
   // enable timer compare interrupt
   TIMSK1 |= (1 << OCIE1A);
   sei();          // enable global interrupts
+}
+*/
+
+void init_PID() {
+  // Tout = Ticks * (Prescale/APB_CLK)
+  // given 80MHz frequency, 80 prescale this makes calculations easy
+  // 1 Tick is 1us
+  // init Timer0, 80 prescale division, count up
+  Timer0_Cfg = timerBegin(0, 80, true);
+  // attach ISR to Timer
+  timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
+  // set count to 5000 equalling 5ms, autoreload true
+  timerAlarmWrite(Timer0_Cfg, 5000, true);
+  timerAlarmEnable(Timer0_Cfg);
 }
 
 void setup() {
@@ -97,7 +114,8 @@ void loop() {
   }
 }
 // The ISR will be called every 5 milliseconds
-ISR(TIMER1_COMPA_vect)
+//ISR(TIMER1_COMPA_vect)
+void IRAM_ATTR Timer0_ISR()
 {
   // calculate the angle of inclination
   accAngle = atan2(accY, accZ)*RAD_TO_DEG;
