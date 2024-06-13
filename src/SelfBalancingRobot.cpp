@@ -4,8 +4,8 @@
 #include "math.h"
 #include <NewPing.h>
 
-#define leftMotorPWMPin   7
-#define leftMotorDirPin   8
+#define leftMotorPWMPin   9
+#define leftMotorDirPin   10
 #define rightMotorPWMPin  6
 #define rightMotorDirPin  5
 
