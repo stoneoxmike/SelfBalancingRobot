@@ -4,10 +4,10 @@
 #include "math.h"
 #include <NewPing.h>
 
-#define leftMotorPWMPin   6
-#define leftMotorDirPin   7
-#define rightMotorPWMPin  5
-#define rightMotorDirPin  4
+#define leftMotorPWMPin   7
+#define leftMotorDirPin   8
+#define rightMotorPWMPin  6
+#define rightMotorDirPin  5
 
 #define Kp  40
 #define Kd  0.05
@@ -21,7 +21,6 @@ int16_t accY, accZ, gyroX;
 volatile int motorPower, gyroRate;
 volatile float accAngle, gyroAngle, currentAngle, prevAngle=0, error, prevError=0, errorSum=0;
 volatile byte count=0;
-int distanceCm;
 
 hw_timer_t *Timer0_Cfg = NULL;
 
