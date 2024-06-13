@@ -9,10 +9,6 @@
 #define rightMotorPWMPin  5
 #define rightMotorDirPin  4
 
-#define TRIGGER_PIN 9
-#define ECHO_PIN 8
-#define MAX_DISTANCE 75
-
 #define Kp  40
 #define Kd  0.05
 #define Ki  40
@@ -20,7 +16,6 @@
 #define targetAngle -2.5
 
 MPU6050 mpu;
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 int16_t accY, accZ, gyroX;
 volatile int motorPower, gyroRate;
@@ -129,11 +124,4 @@ void loop() {
   // set motor power after constraining it
   motorPower = constrain(motorPower, -255, 255);
   setMotors(motorPower, motorPower);
-  // measure distance every 100 milliseconds
-  if((count%20) == 0){
-    distanceCm = sonar.ping_cm();
-  }
-  if((distanceCm < 20) && (distanceCm != 0)) {
-    setMotors(-motorPower, motorPower);
-  }
 }
