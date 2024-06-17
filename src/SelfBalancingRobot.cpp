@@ -4,9 +4,9 @@
 #include "math.h"
 #include <NewPing.h>
 
-#define leftMotorPWMPin   9
+#define leftMotorPWMPin   A1
 #define leftMotorDirPin   10
-#define rightMotorPWMPin  6
+#define rightMotorPWMPin  A2
 #define rightMotorDirPin  5
 
 #define Kp  40
@@ -99,6 +99,7 @@ void init_PID() {
 }
 
 void setup() {
+  Serial.begin(9600);
   // set the motor control and PWM pins to output mode
   pinMode(leftMotorPWMPin, OUTPUT);
   pinMode(leftMotorDirPin, OUTPUT);
@@ -120,6 +121,10 @@ void loop() {
   accY = mpu.getAccelerationY();
   accZ = mpu.getAccelerationZ();  
   gyroX = mpu.getRotationX();
+  Serial.print("accY, accZ, gyroX: ");
+  Serial.print(accY + " ");
+  Serial.print(accZ + " ");
+  Serial.println(gyroX);
   // set motor power after constraining it
   motorPower = constrain(motorPower, -255, 255);
   setMotors(motorPower, motorPower);
