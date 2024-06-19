@@ -1,6 +1,7 @@
 #include "Wire.h"
 #include "I2Cdev.h"
-#include "MPU6050.h"
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
 #include "math.h"
 #include <NewPing.h>
 
@@ -15,7 +16,7 @@
 #define sampleTime  0.005
 #define targetAngle -2.5
 
-MPU6050 mpu;
+Adafruit_MPU6050 mpu;
 
 int16_t accY, accZ, gyroX;
 volatile int motorPower, gyroRate;
@@ -23,6 +24,7 @@ volatile float accAngle, gyroAngle, currentAngle, prevAngle=0, error, prevError=
 volatile byte count=0;
 
 hw_timer_t *Timer0_Cfg = NULL;
+sensors_event_t a, g, temp;
 
 void setMotors(int leftMotorSpeed, int rightMotorSpeed) {
   if(leftMotorSpeed >= 0) {
@@ -65,6 +67,11 @@ void init_PID() {
 //ISR(TIMER1_COMPA_vect)
 void IRAM_ATTR Timer0_ISR()
 {
+  // read acceleration and gyroscope values
+  mpu.getEvent(&a, &g, &temp);
+  accY = a.acceleration.y;
+  accZ = a.acceleration.z;  
+  gyroX = g.gyro.x;
   // calculate the angle of inclination
   accAngle = atan2(accY, accZ)*RAD_TO_DEG;
   gyroRate = map(gyroX, -32768, 32767, -250, 250);
@@ -77,11 +84,15 @@ void IRAM_ATTR Timer0_ISR()
   //calculate output from P, I and D values
   motorPower = Kp*(error) + Ki*(errorSum)*sampleTime - Kd*(currentAngle-prevAngle)/sampleTime;
   prevAngle = currentAngle;
+  // set motor power after constraining it
+  motorPower = constrain(motorPower, -255, 255);
+  setMotors(motorPower, motorPower);
   // toggle the led on pin13 every second
   count++;
   if(count == 200)  {
     count = 0;
     digitalWrite(13, !digitalRead(13));
+    //Serial.println("ISR");
   }
 }
 
@@ -99,7 +110,15 @@ void init_PID() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(115200);
+  // Try to initialize!
+  if (!mpu.begin()) {
+    //Serial.println("Failed to find MPU6050 chip");
+    while (1) {
+      delay(10);
+    }
+  }
+  //Serial.println("MPU6050 Found!");
   // set the motor control and PWM pins to output mode
   pinMode(leftMotorPWMPin, OUTPUT);
   pinMode(leftMotorDirPin, OUTPUT);
@@ -108,24 +127,16 @@ void setup() {
   // set the status LED to output mode 
   pinMode(13, OUTPUT);
   // initialize the MPU6050 and set offset values
-  mpu.initialize();
-  mpu.setYAccelOffset(1593);
-  mpu.setZAccelOffset(963);
-  mpu.setXGyroOffset(40);
+  // mpu.setYAccelOffset(1593);
+  // mpu.setZAccelOffset(963);
+  // mpu.setXGyroOffset(40);
   // initialize PID sampling loop
   init_PID();
 }
 
 void loop() {
-  // read acceleration and gyroscope values
-  accY = mpu.getAccelerationY();
-  accZ = mpu.getAccelerationZ();  
-  gyroX = mpu.getRotationX();
-  Serial.print("accY, accZ, gyroX: ");
-  Serial.print(accY + " ");
-  Serial.print(accZ + " ");
-  Serial.println(gyroX);
-  // set motor power after constraining it
-  motorPower = constrain(motorPower, -255, 255);
-  setMotors(motorPower, motorPower);
+  // Serial.print(accY + " ");
+  // Serial.print(accZ + " ");
+  // Serial.println(gyroX);
+  
 }
