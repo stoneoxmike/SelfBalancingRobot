@@ -18,11 +18,11 @@
 
 long startTime;
 long endTime;
-long elapsedTime;
+double elapsedTime;
 
 Adafruit_MPU6050 mpu;
 
-int16_t accY, accZ, gyroX;
+float accY, accZ, gyroX;
 volatile int motorPower, gyroRate;
 volatile float accAngle, gyroAngle, currentAngle, prevAngle=0, error, prevError=0, errorSum=0;
 volatile byte count=0;
@@ -51,10 +51,35 @@ void setMotors(int leftMotorSpeed, int rightMotorSpeed) {
 
 // The ISR will be called every 5 milliseconds
 //ISR(TIMER1_COMPA_vect)
-void IRAM_ATTR Timer0_ISR()
-{
+// void IRAM_ATTR Timer0_ISR()
+// {
+//   // mpu.getEvent(&a, &g, &temp);
+//   // accY = a.acceleration.y; //m/s^2
+//   // accZ = a.acceleration.z;  
+//   // gyroX = g.gyro.x; // rad/s
 
-}
+//   // calculate the angle of inclination
+//   accAngle = atan2(accY, accZ)*RAD_TO_DEG;
+//   gyroAngle = (float)(gyroX*RAD_TO_DEG)*sampleTime;
+//   Serial.println(gyroAngle);
+//   currentAngle = 0.9934*(prevAngle + gyroAngle) + 0.0066*(accAngle);
+  
+//   error = currentAngle - targetAngle;
+//   errorSum = errorSum + error;  
+//   errorSum = constrain(errorSum, -300, 300);
+//   //calculate output from P, I and D values
+//   motorPower = Kp*(error) + Ki*(errorSum)*sampleTime - Kd*(currentAngle-prevAngle)/sampleTime;
+//   prevAngle = currentAngle;
+//   // set motor power after constraining it
+//   motorPower = constrain(motorPower, -255, 255);
+//   setMotors(motorPower, motorPower);
+//   // toggle the led on pin13 every second
+//   count++;
+//   if(count == 200)  {
+//     count = 0;
+//     digitalWrite(13, !digitalRead(13));
+//   }
+// }
 
 // void init_PID() {
 //   // Tout = Ticks * (Prescale/APB_CLK)
@@ -70,7 +95,7 @@ void IRAM_ATTR Timer0_ISR()
 // }
 
 void setup() {
-  //Serial.begin(115200);
+  Serial.begin(115200);
   // Try to initialize!
   if (!mpu.begin()) {
     //Serial.println("Failed to find MPU6050 chip");
@@ -90,26 +115,23 @@ void setup() {
   // mpu.setYAccelOffset(1593);
   // mpu.setZAccelOffset(963);
   // mpu.setXGyroOffset(40);
+  mpu.setGyroRange(MPU6050_RANGE_250_DEG);
   // initialize PID sampling loop
-  //init_PID();
+  // init_PID();
 }
 
 void loop() {
-  // Serial.print(accY + " ");
-  // Serial.print(accZ + " ");
-  // Serial.println(gyroX);
   // read acceleration and gyroscope values
   startTime = micros();
 
   mpu.getEvent(&a, &g, &temp);
-  accY = a.acceleration.y;
+  accY = a.acceleration.y; //m/s^2
   accZ = a.acceleration.z;  
-  gyroX = g.gyro.x;
+  gyroX = g.gyro.x; // rad/s
 
   // calculate the angle of inclination
   accAngle = atan2(accY, accZ)*RAD_TO_DEG;
-  gyroRate = map(gyroX, -32768, 32767, -250, 250);
-  gyroAngle = (float)gyroRate*elapsedTime;  
+  gyroAngle = (float)(gyroX*RAD_TO_DEG)*elapsedTime;
   currentAngle = 0.9934*(prevAngle + gyroAngle) + 0.0066*(accAngle);
   
   error = currentAngle - targetAngle;
@@ -122,13 +144,13 @@ void loop() {
   motorPower = constrain(motorPower, -255, 255);
   setMotors(motorPower, motorPower);
   // toggle the led on pin13 every second
-  // count++;
-  // if(count == 200)  {
-  //   count = 0;
-  //   digitalWrite(13, HIGH);
-  //   //Serial.println("ISR");
-  // }
+  count++;
+  if(count == 200)  {
+    count = 0;
+    digitalWrite(13, !digitalRead(13));
+  }
 
   endTime = micros();
-  elapsedTime = endTime - startTime;
+  elapsedTime = (double)(endTime - startTime) / 1000000;
+  // Serial.println(elapsedTime);
 }
