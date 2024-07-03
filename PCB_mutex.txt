@@ -2,4 +2,3 @@
 # If there is no name below, add your name below and commit/push changes before modifying the PCB files
 # When done modifying, remove your name and commit/push changes including PCB files
 # If there is already a name, wait until that person is done before modifying the PCB files
-Michael
