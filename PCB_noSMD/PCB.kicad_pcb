@@ -114,9 +114,9 @@
 			(subtractmaskfromsilk no)
 			(outputformat 1)
 			(mirror no)
-			(drillshape 1)
+			(drillshape 0)
 			(scaleselection 1)
-			(outputdirectory "")
+			(outputdirectory "gerbers_1/")
 		)
 	)
 	(net 0 "")
@@ -1941,7 +1941,7 @@
 		(descr "Through hole straight pin header, 1x02, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x02 2.54mm single row")
 		(property "Reference" "J10"
-			(at 0 -2.33 360)
+			(at 0 -2.33 0)
 			(layer "F.SilkS")
 			(uuid "4131ec17-1d3a-465e-ae00-384c84f1f183")
 			(effects
@@ -1952,7 +1952,7 @@
 			)
 		)
 		(property "Value" "Screw_Terminal_01x02"
-			(at 0 4.87 360)
+			(at 0 4.87 0)
 			(layer "F.Fab")
 			(uuid "d022fbfc-90ad-4147-b315-906c113b5719")
 			(effects
@@ -2208,7 +2208,7 @@
 		(descr "Through hole straight pin header, 1x02, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x02 2.54mm single row")
 		(property "Reference" "J9"
-			(at 0 -2.33 360)
+			(at 0 -2.33 0)
 			(layer "F.SilkS")
 			(uuid "4dc85f71-6c01-401f-a656-4c3f450893a2")
 			(effects
@@ -2219,7 +2219,7 @@
 			)
 		)
 		(property "Value" "Screw_Terminal_01x02"
-			(at 0 4.87 360)
+			(at 0 4.87 0)
 			(layer "F.Fab")
 			(uuid "b524a90a-b612-4986-8112-f5116a4cd58c")
 			(effects

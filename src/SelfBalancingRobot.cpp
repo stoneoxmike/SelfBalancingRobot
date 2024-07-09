@@ -121,9 +121,10 @@ void setup() {
 }
 
 void loop() {
-  // read acceleration and gyroscope values
+  // get time at beginning of loop in microseconds
   startTime = micros();
 
+  // read acceleration and gyroscope values
   mpu.getEvent(&a, &g, &temp);
   accY = a.acceleration.y; //m/s^2
   accZ = a.acceleration.z;  
@@ -134,15 +135,19 @@ void loop() {
   gyroAngle = (float)(gyroX*RAD_TO_DEG)*elapsedTime;
   currentAngle = 0.9934*(prevAngle + gyroAngle) + 0.0066*(accAngle);
   
+  // calculate error
   error = currentAngle - targetAngle;
   errorSum = errorSum + error;  
   errorSum = constrain(errorSum, -300, 300);
-  //calculate output from P, I and D values
+
+  // calculate output from P, I and D values
   motorPower = Kp*(error) + Ki*(errorSum)*elapsedTime - Kd*(currentAngle-prevAngle)/elapsedTime;
   prevAngle = currentAngle;
+
   // set motor power after constraining it
   motorPower = constrain(motorPower, -255, 255);
   setMotors(motorPower, motorPower);
+
   // toggle the led on pin13 every second
   count++;
   if(count == 200)  {
@@ -150,6 +155,7 @@ void loop() {
     digitalWrite(13, !digitalRead(13));
   }
 
+  // calculate elapsed time in seconds
   endTime = micros();
   elapsedTime = (double)(endTime - startTime) / 1000000;
   // Serial.println(elapsedTime);
