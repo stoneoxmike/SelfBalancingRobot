@@ -10,11 +10,11 @@
 #define rightMotorPWMPin  A2
 #define rightMotorDirPin  5
 
-#define Kp  40
-#define Kd  0.05
-#define Ki  40
+#define Kp  80
+#define Kd  0
+#define Ki  0
 #define sampleTime  0.005
-#define targetAngle -2.5
+#define targetAngle 4
 
 long startTime;
 long endTime;
@@ -139,6 +139,10 @@ void loop() {
   error = currentAngle - targetAngle;
   errorSum = errorSum + error;  
   errorSum = constrain(errorSum, -300, 300);
+
+  Serial.print(error);
+  Serial.print("   ");
+  Serial.println(currentAngle);
 
   // calculate output from P, I and D values
   motorPower = Kp*(error) + Ki*(errorSum)*elapsedTime - Kd*(currentAngle-prevAngle)/elapsedTime;

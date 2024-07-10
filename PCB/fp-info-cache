@@ -1,4 +1,4 @@
-23640354364378814
+23642074989378694
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -64637,6 +64637,13 @@ Yellow 5381 Series LED
 0
 2
 2
+Library
+USB_C_Receptacle_GT-USB-7087B
+USB TYPE C, RA RCPT PCB, SMT, https://www.amphenolcanada.com/StockAvailabilityPrice.aspx?From=&PartNum=12401610E4%7e2A
+USB C Type-C Receptacle SMD
+0
+32
+25
 Module
 A20_OLINUXINO_LIME2
 A20 Olinuxino LIME2, 1.2GHz, 512-1024MB RAM, Micro-SD, NAND or eMMC, 1000Mbit Ethernet
