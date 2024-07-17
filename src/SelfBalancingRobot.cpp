@@ -10,6 +10,19 @@
 #define rightMotorPWMPin  A2
 #define rightMotorDirPin  5
 
+#define referenceRange 19.62
+#define referenceLow -9.81
+#define rawRangeX 19.95
+#define rawRangeY 19.61
+#define rawRangeZ 20.07
+#define rawLowX -9.61
+#define rawLowY -9.67
+#define rawLowZ -10.03
+
+#define gyroXOffset 0.13
+#define gyroYOffset 0
+#define gyroZOffset -0.01
+
 #define Kp  48
 #define Kd  .2
 #define Ki  99
@@ -126,9 +139,9 @@ void loop() {
 
   // read acceleration and gyroscope values
   mpu.getEvent(&a, &g, &temp);
-  accY = a.acceleration.y; //m/s^2
-  accZ = a.acceleration.z;  
-  gyroX = g.gyro.x; // rad/s
+  accY = (((a.acceleration.y - rawLowY) * referenceRange) / rawRangeY) + referenceLow; //m/s^2
+  accZ = (((a.acceleration.z - rawLowZ) * referenceRange) / rawRangeZ) + referenceLow;
+  gyroX = g.gyro.x + gyroXOffset; // rad/s
 
   // calculate the angle of inclination
   accAngle = atan2(accY, accZ)*RAD_TO_DEG;
