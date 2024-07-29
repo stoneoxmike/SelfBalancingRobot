@@ -35,7 +35,7 @@ double elapsedTime;
 
 Adafruit_MPU6050 mpu;
 
-float accY, accZ, gyroX;
+float accX, accZ, gyroY;
 volatile int motorPower, gyroRate;
 volatile float accAngle, gyroAngle, currentAngle, prevAngle=0, error, prevError=0, errorSum=0;
 volatile byte count=0;
@@ -111,12 +111,13 @@ void setup() {
   Serial.begin(115200);
   // Try to initialize!
   if (!mpu.begin()) {
-    //Serial.println("Failed to find MPU6050 chip");
+    Serial.println("Failed to find MPU6050 chip");
     while (1) {
       delay(10);
     }
   }
-  //Serial.println("MPU6050 Found!");
+  Serial.println("MPU6050 Found!");
+
   // set the motor control and PWM pins to output mode
   pinMode(leftMotorPWMPin, OUTPUT);
   pinMode(leftMotorDirPin, OUTPUT);
@@ -139,13 +140,13 @@ void loop() {
 
   // read acceleration and gyroscope values
   mpu.getEvent(&a, &g, &temp);
-  accY = (((a.acceleration.y - rawLowY) * referenceRange) / rawRangeY) + referenceLow; //m/s^2
-  accZ = (((a.acceleration.z - rawLowZ) * referenceRange) / rawRangeZ) + referenceLow;
-  gyroX = g.gyro.x + gyroXOffset; // rad/s
+  accX = ((-1 * (a.acceleration.x - rawLowX) * referenceRange) / rawRangeX) + referenceLow; //m/s^2
+  accZ = ((-1 * (a.acceleration.z - rawLowZ) * referenceRange) / rawRangeZ) + referenceLow;
+  gyroY = g.gyro.y + gyroYOffset; // rad/s
 
   // calculate the angle of inclination
-  accAngle = atan2(accY, accZ)*RAD_TO_DEG;
-  gyroAngle = (float)(gyroX*RAD_TO_DEG)*elapsedTime;
+  accAngle = atan2(accX, accZ)*RAD_TO_DEG;
+  gyroAngle = (float)(gyroY*RAD_TO_DEG)*elapsedTime;
   currentAngle = 0.9934*(prevAngle + gyroAngle) + 0.0066*(accAngle);
   
   // calculate error
