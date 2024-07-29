@@ -6,7 +6,7 @@
 #include <NewPing.h>
 
 #define leftMotorPWMPin   A1
-#define leftMotorDirPin   10
+#define leftMotorDirPin   6
 #define rightMotorPWMPin  A2
 #define rightMotorDirPin  5
 
@@ -27,7 +27,7 @@
 #define Kd  .2
 #define Ki  99
 #define sampleTime  0.005
-#define targetAngle -4.5
+#define targetAngle 0.045
 
 long startTime;
 long endTime;
@@ -35,7 +35,7 @@ double elapsedTime;
 
 Adafruit_MPU6050 mpu;
 
-float accX, accZ, gyroY;
+float accX, accY, accZ, gyroY;
 volatile int motorPower, gyroRate;
 volatile float accAngle, gyroAngle, currentAngle, prevAngle=0, error, prevError=0, errorSum=0;
 volatile byte count=0;
@@ -140,8 +140,9 @@ void loop() {
 
   // read acceleration and gyroscope values
   mpu.getEvent(&a, &g, &temp);
-  accX = ((-1 * (a.acceleration.x - rawLowX) * referenceRange) / rawRangeX) + referenceLow; //m/s^2
-  accZ = ((-1 * (a.acceleration.z - rawLowZ) * referenceRange) / rawRangeZ) + referenceLow;
+  accX = (((a.acceleration.x - rawLowX) * referenceRange) / rawRangeX) + referenceLow; //m/s^2
+  accY = (((a.acceleration.y - rawLowY) * referenceRange) / rawRangeY) + referenceLow; //m/s^2
+  accZ = (((-1 * a.acceleration.z - rawLowZ) * referenceRange) / rawRangeZ) + referenceLow;
   gyroY = g.gyro.y + gyroYOffset; // rad/s
 
   // calculate the angle of inclination
@@ -153,6 +154,14 @@ void loop() {
   error = currentAngle - targetAngle;
   errorSum = errorSum + error;  
   errorSum = constrain(errorSum, -300, 300);
+  // Serial.print("AccX: ");
+  // Serial.print(accX, 3);
+  // Serial.print("    AccY: ");
+  // Serial.print(accY, 3);
+  // Serial.print("    AccZ: ");
+  // Serial.print(accZ, 3);
+  // Serial.print("    GyroY: ");
+  // Serial.print(gyroY, 3);
   Serial.print("Current Angle: ");
   Serial.print(currentAngle, 3);
   Serial.print("   targetAngle: ");
