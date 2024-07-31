@@ -53,6 +53,7 @@ void loop(void)
   
     Serial.print("Accel Minimums: "); Serial.print(AccelMinX); Serial.print("  ");Serial.print(AccelMinY); Serial.print("  "); Serial.print(AccelMinZ); Serial.println();
     Serial.print("Accel Maximums: "); Serial.print(AccelMaxX); Serial.print("  ");Serial.print(AccelMaxY); Serial.print("  "); Serial.print(AccelMaxZ); Serial.println();
+    Serial.print("Accel Ranges: "); Serial.print(AccelMaxX-AccelMinX); Serial.print("  ");Serial.print(AccelMaxY - AccelMinY); Serial.print("  "); Serial.print(AccelMaxZ-AccelMinZ); Serial.println();
 
     while (Serial.available())
     {
