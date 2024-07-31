@@ -23,11 +23,14 @@
 #define gyroYOffset 0.03
 #define gyroZOffset -0.02
 
-#define Kp  48
-#define Kd  .2
-#define Ki  99
+// #define Kp  48
+// #define Kd  .2
+// #define Ki  99
+#define Kp  112
+#define Kd  0
+#define Ki  112
 #define sampleTime  0.005
-#define targetAngle 0.045
+#define targetAngle 1
 
 long startTime;
 long endTime;
