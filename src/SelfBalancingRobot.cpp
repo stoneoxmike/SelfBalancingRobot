@@ -12,16 +12,16 @@
 
 #define referenceRange 19.62
 #define referenceLow -9.81
-#define rawRangeX 19.95
-#define rawRangeY 19.61
-#define rawRangeZ 20.07
-#define rawLowX -9.61
-#define rawLowY -9.67
-#define rawLowZ -10.03
+#define rawRangeX 19.47
+#define rawRangeY 19.62
+#define rawRangeZ 19.94
+#define rawLowX -9.42
+#define rawLowY -9.73
+#define rawLowZ -10.04
 
-#define gyroXOffset 0.13
-#define gyroYOffset 0
-#define gyroZOffset -0.01
+#define gyroXOffset -0.06
+#define gyroYOffset 0.03
+#define gyroZOffset -0.02
 
 #define Kp  48
 #define Kd  .2
