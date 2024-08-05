@@ -26,11 +26,11 @@
 // #define Kp  48
 // #define Kd  .2
 // #define Ki  99
-#define Kp  112
-#define Kd  0
-#define Ki  112
+#define Kp  25
+#define Kd  0.05
+#define Ki  100
 #define sampleTime  0.005
-#define targetAngle 1
+#define targetAngle 2.75
 
 long startTime;
 long endTime;
@@ -150,7 +150,7 @@ void loop() {
 
   // calculate the angle of inclination
   accAngle = atan2(accX, accZ)*RAD_TO_DEG;
-  gyroAngle = (float)(gyroY*RAD_TO_DEG)*elapsedTime;
+  gyroAngle = (float)(gyroY*RAD_TO_DEG)*sampleTime;
   currentAngle = 0.9934*(prevAngle + gyroAngle) + 0.0066*(accAngle);
   
   // calculate error
@@ -165,16 +165,20 @@ void loop() {
   // Serial.print(accZ, 3);
   // Serial.print("    GyroY: ");
   // Serial.print(gyroY, 3);
-  Serial.print("Current Angle: ");
+  // Serial.print("Current Angle: ");
   Serial.print(currentAngle, 3);
-  Serial.print("   targetAngle: ");
+  // Serial.print("   targetAngle: ");
+  Serial.print(", ");
   Serial.print(targetAngle);
-  Serial.print("   error: ");
-  Serial.println(error);
+  // Serial.print("   error: ");
+  Serial.print(", ");
+  // Serial.println(error);
 
   // calculate output from P, I and D values
-  motorPower = Kp*(error) + Ki*(errorSum)*elapsedTime - Kd*(currentAngle-prevAngle)/elapsedTime;
+  motorPower = Kp*(error) + Ki*(errorSum)*sampleTime - Kd*(currentAngle-prevAngle)/sampleTime;
   prevAngle = currentAngle;
+
+  Serial.println(motorPower);
 
   // set motor power after constraining it
   motorPower = constrain(motorPower, -255, 255);
@@ -190,5 +194,6 @@ void loop() {
   // calculate elapsed time in seconds
   endTime = micros();
   elapsedTime = (double)(endTime - startTime) / 1000000;
+  delayMicroseconds(sampleTime - elapsedTime);
   // Serial.println(elapsedTime);
 }
