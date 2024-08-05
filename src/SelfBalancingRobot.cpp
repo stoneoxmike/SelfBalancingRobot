@@ -26,11 +26,11 @@
 // #define Kp  48
 // #define Kd  .2
 // #define Ki  99
-#define Kp  25
-#define Kd  0.05
-#define Ki  100
+#define Kp  25      //25
+#define Kd  0.05    //0.05
+#define Ki  100     //100
 #define sampleTime  0.005
-#define targetAngle 2.75
+#define targetAngle 3.125
 
 long startTime;
 long endTime;
